@@ -1,0 +1,274 @@
+1.Responsive design - one website workig great on all devices. Fluid layouts, media  queries, responsive images, correct units, desktop-first vs mobile-first.
+2. Writing maintainable and scalable code - clean, easy to und, growth, reusable, organize files, name classes, structure html.
+3. Web performance - less http req, less code, compress code, preprocesor- less images, compress images. 
+
+
+When we load webpage:
+Load HTML => Parse html => Document Object Model(DOM)
+                     => Load CSS => Parse Css(resolve  conflicting CSS declarations(cascade) and Process final CSS values) => CSS Object Model(CSSOM)    
+=> DOM + CSSOM => Render Tree => Website rendering the visual formatting model => Final rendered website
+
+CSS terminology: 
+CSS Rule = Selector + declaration block(consist of declarations(Property + declared value)) 
+
+How CSS is parsed: 
+[1] -- Cascade: importance > Specifity > source order
+Importance: 1. User !important declarations 2. Author !important declarations 3. Author declarations 4. User declarations 5. Default browser declarations.
+
+Is importance is the same, browser calculates SPECIFITY: 1. Inline styles 2. IDs 3. Classes, pseudo-classes, attribute, 4. Elements, pseudo-elements
+
+If there is same importance, source order will be applies
+
+CSS declarations with !important have the highest priority
+Only use !important as a last resource! Look on specifity first, this way code will be more maintainable
+Inline styles always have higher priority than stylesheet
+Universal selector * has no specifity value(0,0,0,0)
+Rely on specifity than on order of selectors
+Rely on order of selectors, when u use 3rd party stylesheet!! Your should be last then!
+
+[2] -- How CSS values are processed:
+1. Declared value 
+2. Cascaded value
+3. Specified value(defaulting if there is no  cascaded value)
+4. Computed value(converts relative values to absolute)
+5. Used value(final calculations, based on layout)
+6. Actual value(rounded to full pixels etc.)  
+
+How units are converted from relative to absolute (px)
+PERCENTAGE BASED:
+fonts: x% => x% * parent's copmuted font size => px
+lengths: x% => x% * parent's computed WIDTH  => px
+Parents width is reference for  % based computataions!!
+
+FONT BASED:
+em(font): x => x * PARENT's copmuted font size => px
+em(length): x => x * CURRENT ELEMENT computed FONT-SIZE  => px
+rem: x * ROOT computed font-size => px
+
+rems always use root!!
+We should use ems and rems bc with that we can build more robust and response layouts!!
+
+VIEWPORT-BASED:
+1vh = 1% of view port height: x% of view port height 
+1 vw = 1% of view port width: x% of view port width
+
+
+Inheritance: 
+Every CSS proporty must have a value. If there is a cascaded value, it becomes specified value. If no, value gets inherited, if it can(its also a computed value from some of parent). 
+If cant be inherited, its initial value.
+
+Website rendering: THE VISUAL FORMATTING MODEL
+Visual formatting model = Algorithm that calculates boxes and determines the layout of these bocxes. for each element in the render tree, in order to determine the final layout of the page.
+
+Algorithm takes into account:
+Dimensions of boxed - the box model;
+Box type - inline, block, inline-block;
+Positioning scheme: floats and positioning;
+Stacking context;
+Other elements in  the render tree;
+Viewport size, dimensions of images, etc.
+
+1. The Box Model: A. Each element can be seen as rectangular box;
+B. Each box has margin, border, padding, content(with width and height).
+content: text, images
+Padding transparent area betreen border and content, inside the box
+border: around padding and content
+margin: space between boxed
+FILL AREA is padding and content, there applies background properties, so not  only on content!(but not the margin)
+
+BLOCK LEVEL BOXES:
+Box sizing: total width = right border + right padding + specified width + left padding + left border
+total height = top border + top badding + specified height + bottom padding + bottom border
+
+Box model with box-sizing: border-box; If we add this declaration, padding will go into width and height, so what we specify will be final width and height, with padding reducing size of content. No width or height will be added.
+Now total width = specified width
+Total height = specified height!!
+
+BOX TYPES: Type of the box is defines by display property!!
+--Block-level boxes: 1. Elements formatted visually as blocks
+2. 100% of parent's width
+3. Verticalle. one after another
+4. Box model applies as above
+5. This is fefault property for elements that 'formatted visually as boxes'(e.g. divs), however, it can be always changed! 
+display: block
+display: flex
+dixplay: list-item
+display: table
+
+--Inline boxes: 1.Content is distributed in lines
+2. Occupies only content's space(only as much space as its content needs)
+3. No line breaks.
+4. No heights and widths(we cant use them!)!!
+5. Paddings and margins only horizontal(left and right)!!
+display: inline
+
+--inline-block boxes: 1. A mix of block and inline
+2. Are inline boxes that work as block level boxes(on the inside)
+3. Occupies only content's space!!!
+4. No line-breaks
+5. box model applies as above
+display:inline-block
+
+
+Positioning schemes
+--Normal flow: 1. Default positioning cheme
+2. NOT floated
+3. NOT absolutely positioned
+4.Elements laid out according to natural source code order
+Default
+position:relative
+
+--Floats
+1. Element REMOVED from normal flow
+2. Text and inline elements will wrap around floated element
+3. The container will not adjust its height to the element
+here we use clearfixed to adjust
+float: left
+fload: right
+
+--Absolute positioning
+1. Element is REMOVED from the normal flow
+2. No impact on surrounding content or elements!!
+3. We use top, bottom, left and right to offset the element from its RELATIVELY POSITIONED 
+CONTAINER
+position: absolute
+position: fixed
+
+
+Stacking context: layers to format stack. Elements higher up the stack appear on top of other
+z-index WORKS ONLY ON position:relative and position: absolute position: fixed, or position: sticky!!!
+Other properties also create Stacking context!!
+
+
+CSS architecture:
+Think => build => architect
+Think
+--Component-driven design:(similar to Atomic Design)
+1. Modular building block that make up interfaces;
+2. Held together by the layout of the page;
+3. Re-usable across a project and between different projects.
+4. Independent, allowing us to use them anywhere on the page.
+
+Build
+--BEM Block Element Modifier
+1. Block is a standalone component that is meaningful on its own
+2. Elements is a part of a block that han no standalone meaning
+3. Modifier is a different version of a block or an element
+
+Architect
+The 7-1 pattern
+7 different folders for partial Sass Files(
+base
+components
+layout
+pages
+themes
+abstracts
+vendors(3rd party css)   )
+1 main Sass file to import all other files into a compiled CSS stylesheet
+
+Responsive design principles:
+1. Fluid grids and layouts - content has to easily adapt to the current viewport. Use % rather than px for all layout-related lengths.
+2. Flexible/responsive images - images behave differently than the text content, meaning they do not scale automatically then we scale viewport. Define their dimensions and percentages, rather than fixed units like px. optimize for different width.
+3. Media queries - change styles on different device width. 
+
+Layout types:
+Float layouts 
+Flexbox
+CSS grid
+
+
+Desktop-first:
+use max width
+
+Mobile first
+Use min-width
+
+
+Responsive images:
+1. Resolution switching - decrease image resolution on smaler screen
+2. Density switching - Half the image resolution on lower res screen
+3. Art direction - when u want to serve defferent image on different screens(or paart of it)
+
+Simple build process:
+main.scss => style.comp.css => style.concat.css => style.prefix.css => style.css(production code)
+[compilation => concatenation => prefixing => compressing]
+compilation is from scss to css
+concatenation is from multiple css files to one
+prefixing is automatically adding prefixed to our code
+compressing is compressing....
+ 
+
+
+Flexbox :
+easy to align elements one to another in different directions and orders
+Main idea is to give the container the ability to expand and to shrink elements to best use all the avilable space
+Flexbox replaces float layouts, using less, and more readable and logical code
+
+To use flexbox set container display to flex
+display: flex
+display: flex-inline   =  behaves like inline flex container...
+x-axis is main axis initially
+y-axis is cross axis initially
+we can these direcitons
+
+Container:
+--flex-direcions: 1. row
+2. row-reverse
+3. column
+4. column-reverse
+changes direction of main axis
+
+--flex-wrap: 1. wrap
+2.wrap-reverse
+defines weather items should wrap into new line when there is no space ikn line
+
+--justify-content: 1. flex-start
+2. flex-end
+center
+space-between
+space-around
+space-evenly
+defines how flex items will be aligned along the main axis
+
+--align-items: 1. stretch
+2. flex-start
+flex-end
+center
+baseline
+Defines how items are aligned along cross axis
+1.906 1.929
+--align-content: 1.stretch
+flex-start
+flex-end
+center
+space-between
+space-around
+Applies only when there is more than one row of items
+Then it controls how ROWS are aligned along the cross axis if there are some empty spaces  
+
+ITEM:
+--align-self: 1.auto
+stretch
+flex-start
+flex-end
+center
+baseline
+Defines how one individual flex item aligns
+
+--order: 1. 0 | integer
+defines and order in which item should appear inside the container
+Helpgul to reorder items for smaller screeng e.g.
+
+--flex-grow: 0 | integer
+How much an item can grow
+
+--flex-shrink: 1 | integer
+How much it can shrink
+
+-- flex-basis: auto | length
+
+--flex: integer integer length
+Short for 3 above in corresponding order!
+defines items base width
+
